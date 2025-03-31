@@ -1,0 +1,49 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Driver {
+  id            Int          @id @default(autoincrement())
+  fullName      String
+  email         String       @unique
+  licenseNumber String       @unique
+  vechile       String?
+  deliveries    Deliveries[]
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @default(now())
+}
+
+model Deliveries {
+  id         Int      @id @default(autoincrement())
+  deliveryId String   @unique
+  status     String   @default("pending") //pending, in-transit, delivered, cancelled
+  driverId   Int?
+  driver     Driver?  @relation(fields: [driverId], references: [id], onDelete: SetNull)
+  routeId    Int
+  route      Route    @relation(fields: [routeId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now())
+}
+
+model Route {
+  id            Int          @id @default(autoincrement())
+  origin        String
+  destination   String
+  distance      Float? //distance in Km or miles
+  estimatedTime String?
+  deliveries    Deliveries[]
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @default(now())
+}

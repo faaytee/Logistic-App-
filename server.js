@@ -1,7 +1,8 @@
 require("dotenv").config();
 const express = require("express");
-
+const authRoutes = require("./routes/authRoutes.js")
 const { PrismaClient } = require("@prisma/client");
+const errorHandler = require("./middleware/errorHandler.js");
 const prisma = new PrismaClient();
 
 const port = process.env.APP_PORT || 3000;
@@ -21,6 +22,9 @@ app.use(express.json());
 app.get("/", (req, res) => {
   res.send("Hello world");
 });
+
+app.use('/', authRoutes);
+app.use(errorHandler);
 
 app.listen(port, () => {
   console.log(`app is listening at ${port}`);

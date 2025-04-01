@@ -14,45 +14,51 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 enum Role {
   USER
   DRIVER
   ADMIN
 }
 
+enum DeliveryStatus {
+  PENDING
+  IN_TRANSIT
+  DELIVERED
+  CANCELLED
+}
+
 model User {
-  id            Int      @id @default(autoincrement())
+  id            Int          @id @default(autoincrement())
   fullName      String
-  email         String   @unique
-  password      String   
-  role          Role     @default(USER)  // USER, DRIVER, or ADMIN
-  licenseNumber String?  @unique  // Only for DRIVER
-  vehicle       String?  // Only for DRIVER
+  email         String       @unique
+  password      String
+  role          Role         @default(USER) // USER, DRIVER, or ADMIN
+  licenseNumber String?      @unique // Only for DRIVER
+  vehicle       String? // Only for DRIVER
   deliveries    Deliveries[] // Only for DRIVER
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
 }
 
 model Deliveries {
-  id         Int     @id @default(autoincrement())
-  deliveryId String  @unique
-  status     String  @default("pending") // pending, in-transit, delivered, cancelled
+  id         Int      @id @default(autoincrement())
+  deliveryId String   @unique
+  status     DeliveryStatus  @default(PENDING)
   driverId   Int?
-  driver     User?   @relation(fields: [driverId], references: [id], onDelete: SetNull)
+  driver     User?    @relation(fields: [driverId], references: [id], onDelete: SetNull)
   routeId    Int
-  route      Route   @relation(fields: [routeId], references: [id], onDelete: Cascade)
+  route      Route    @relation(fields: [routeId], references: [id], onDelete: Cascade)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @default(now())
 }
 
 model Route {
-  id            Int      @id @default(autoincrement())
+  id            Int          @id @default(autoincrement())
   origin        String
   destination   String
-  distance      Float?   // distance in Km or miles
+  distance      Float? // distance in Km or miles
   estimatedTime String?
   deliveries    Deliveries[]
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @default(now())
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
 }

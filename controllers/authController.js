@@ -2,6 +2,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { PrismaClient } = require("@prisma/client");
 const AppError = require("../errors/AppError");
+const { json } = require("express");
 
 const prisma = new PrismaClient();
 
@@ -42,7 +43,7 @@ const register = async (req, res, next) => {
       },
     });
   } catch (error) {
-    next(error); 
+    next(error);
   }
 };
 
@@ -88,4 +89,22 @@ const login = async (req, res, next) => {
   }
 };
 
-module.exports = { register, login };
+const deliveryRequest = async function (req, res) {
+  try {
+    const { userId, pickupLocation, dropoffLocation, receiversPhone } =
+      req.body;
+
+    if ((!userId, !pickupLocation || !dropoffLocation || !receiversPhone)) {
+      return res.json({ message: "missing field" });
+    }
+
+    const request = await prisma.deliveryRequest.create({
+      data: { userId, pickupLocation, dropoffLocation, receiversPhone },
+    });
+    res.status(201).json({ message: "request created", request });
+  } catch (error) {
+    res.status(500).json({ error: "error creating request" });
+  }
+};
+
+module.exports = { register, login, deliveryRequest };

@@ -1,6 +1,6 @@
 require("dotenv").config();
 const express = require("express");
-const authRoutes = require("./routes/authRoutes.js")
+const authRoutes = require("./routes/authRoutes.js");
 const { PrismaClient } = require("@prisma/client");
 const errorHandler = require("./middleware/errorHandler.js");
 const prisma = new PrismaClient();
@@ -23,7 +23,7 @@ app.get("/", (req, res) => {
   res.send("Hello world");
 });
 
-app.use('/', authRoutes);
+app.use("/", authRoutes);
 app.use(errorHandler);
 
 app.listen(port, () => {

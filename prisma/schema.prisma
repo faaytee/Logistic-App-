@@ -36,8 +36,22 @@ model User {
   licenseNumber String?      @unique // Only for DRIVER
   vehicle       String? // Only for DRIVER
   deliveries    Deliveries[] // Only for DRIVER
+  deliveryRequest DeliveryRequest[]
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
+
+}
+
+model DeliveryRequest{
+  id Int @id @default(autoincrement())
+  userId Int
+  user User @relation(fields: [userId],references: [id], onDelete: Cascade)
+  pickupLocation String
+  dropoffLocation String
+  receiversPhone String
+  status String @default("pending") //pending,accepted, cancelled
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
 }
 
 model Deliveries {

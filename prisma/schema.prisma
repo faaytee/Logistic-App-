@@ -27,6 +27,12 @@ enum DeliveryStatus {
   CANCELLED
 }
 
+enum RequestStatus {
+  PENDING
+  ACCEPTED
+  CANCELLED
+}
+
 model User {
   id            Int          @id @default(autoincrement())
   fullName      String
@@ -37,21 +43,24 @@ model User {
   vehicle       String? // Only for DRIVER
   deliveries    Deliveries[] // Only for DRIVER
   deliveryRequest DeliveryRequest[]
+  status        String       @default("AVAILABLE") 
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
 
 }
 
-model DeliveryRequest{
-  id Int @id @default(autoincrement())
-  userId Int
-  user User @relation(fields: [userId],references: [id], onDelete: Cascade)
-  pickupLocation String
+model DeliveryRequest {
+  id              Int      @id @default(autoincrement())
+  deliveryId      String   @unique @default(uuid()) // Unique ID for tracking
+  userId          Int
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  pickupLocation  String
   dropoffLocation String
-  receiversPhone String
-  status String @default("pending") //pending,accepted, cancelled
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  receiversPhone  String
+  packageInfo     String   // Description of the package
+  status          RequestStatus @default(PENDING) // Using an enum for status
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }
 
 model Deliveries {

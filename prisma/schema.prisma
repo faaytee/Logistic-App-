@@ -59,8 +59,10 @@ model DeliveryRequest {
   receiversPhone  String
   packageInfo     String   // Description of the package
   status          RequestStatus @default(PENDING) // Using an enum for status
+  
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
+   
 }
 
 model Deliveries {
@@ -73,6 +75,7 @@ model Deliveries {
   route      Route    @relation(fields: [routeId], references: [id], onDelete: Cascade)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @default(now())
+     
 }
 
 model Route {

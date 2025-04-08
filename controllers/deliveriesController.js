@@ -77,6 +77,9 @@ const getAssignedDeliveries = async (req, res, next) => {
   try {
     const { driverId } = req.params; // Get the driver ID from the URL params
 
+    console.log(driverId);
+    
+
     if (!driverId) {
       throw new AppError("Driver ID is required", 400);
     }

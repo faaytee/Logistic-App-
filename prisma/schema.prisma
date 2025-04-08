@@ -51,19 +51,19 @@ model User {
 
 model DeliveryRequest {
   id              Int      @id @default(autoincrement())
-  deliveryId      String   @unique @default(uuid()) // Unique ID for tracking
+  deliveryId      String   @unique @default(uuid()) 
   userId          Int
   user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   pickupLocation  String
   dropoffLocation String
   receiversPhone  String
-  packageInfo     String   // Description of the package
-  status          RequestStatus @default(PENDING) // Using an enum for status
-  
+  packageInfo     String
+  status          RequestStatus @default(PENDING)
+  delivery        Deliveries? @relation // Define relation without fields and references here
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
-   
 }
+
 
 model Deliveries {
   id         Int      @id @default(autoincrement())
@@ -73,9 +73,10 @@ model Deliveries {
   driver     User?    @relation(fields: [driverId], references: [id], onDelete: SetNull)
   routeId    Int
   route      Route    @relation(fields: [routeId], references: [id], onDelete: Cascade)
+
+  deliveryRequest DeliveryRequest? @relation(fields: [deliveryId], references: [deliveryId]) // Keep fields and references here
   createdAt  DateTime @default(now())
   updatedAt  DateTime @default(now())
-     
 }
 
 model Route {
